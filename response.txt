@@ -1,4 +1,29 @@
-mera approach bottom up me ye hai ki hum leaf node ka height or diameter dono report karke iupar bhejenge.
-:Lets say ek parent node pe 2 childre nodes hain to har hild bhejega record (height = 0, diameter = 0) apne upar.
-parent ko mila wo apna record banayega = parent height = 1 + Math.max(h1, h2)
-paret diameter = 1 + math.max(d1, d2) and apne upar bhejega
+public int diameter(Node root) {
+        
+    }
+
+    private int dfs(Node root) {
+
+        int best1 = 0;
+        int best2 = 0;
+
+        if (root == null) {
+            return 0;
+        }
+
+        List<Node> children = root.children;
+
+        for (int child: children) {
+
+            int childHeight = dfs(child);
+            if (childHeight > best1) {
+                best2 = best1;
+                best1 = childHeight;
+            }
+            else if (childHeight > best2) {
+                best2 = childHeight;
+            }
+        }
+
+        return 1 + best1;
+    }
