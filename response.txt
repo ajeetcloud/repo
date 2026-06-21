@@ -14,17 +14,25 @@
  * }
  */
 class Solution {
-    public TreeNode invertTree(TreeNode root) {
+    public boolean isUnivalTree(TreeNode root) {
 
         if (root == null) {
-            return null;
+            return false;
         }
-        TreeNode leftSubtree = invertTree(root.left);
-        TreeNode rightSubtree = invertTree(root.right);
+        
+        return dfs(root, root.val);
+    }
 
-        root.left = rightSubtree;
-        root.right = leftSubtree;
+    private boolean dfs(TreeNode node, int val) {
 
-        return root;
+        if (node == null) {
+            return true;
+        }
+
+        if (node.val != val) {
+            return false;
+        }
+
+        return dfs(node.left, val) && dfs(node.right, val);
     }
 }
