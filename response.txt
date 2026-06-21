@@ -1,29 +1,67 @@
-public int diameter(Node root) {
-        
-    }
+class Solution {
+    public List<Integer> findMinHeightTrees(int n, int[][] edges) {
 
-    private int dfs(Node root) {
-
-        int best1 = 0;
-        int best2 = 0;
-
-        if (root == null) {
-            return 0;
+        List<Integer> result = new ArrayList<>();
+        if (n == 1 || n == 2) {
+            for (int i = 0; i < n; i++) {
+                result.add(i);
+            }
+            return result;
         }
 
-        List<Node> children = root.children;
+        List<List<Integer>> adj = new ArrayList<>();
+        int[] indegree = new int[n];
 
-        for (int child: children) {
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>));
+        }
+        for (int[] edge: edges) {
+            int to = edge[0];
+            int from = edge[1];
 
-            int childHeight = dfs(child);
-            if (childHeight > best1) {
-                best2 = best1;
-                best1 = childHeight;
-            }
-            else if (childHeight > best2) {
-                best2 = childHeight;
+            adj.get(to).add(from);
+            adj.get(from).add(to);
+
+            indegree[to]++;
+        }
+
+        Deque<Integer> queue = new ArrayDeque<>();
+
+        for (int i = 0; i < n; i++) {
+            // Leaf node
+            if (indegree[i] == 0) {
+                queue.offer(i);
             }
         }
 
-        return 1 + best1;
+        int rem = n;
+
+        // dont think I will need visited here - check this
+        while (!queue.isEmpty() && rem > 2) {
+
+            int outerLayerSize = queue.size(); // level size
+
+            for (int i = 0; i < outerLayerSize; i++) {
+
+                int current = queue.poll();
+
+                List<Integer> neighbors = adj.get(current);
+                for (int neighbor: neighbors) {
+                    indegree[neighbor]--;
+                    // New leaf in the inner layer
+                    if (indegree[neighbor] == 1) {
+                        queue.offer(neighbor);
+                    }
+                }
+            }
+
+        }
+
+        // At this point the queue should have either 1 or 2 entry
+        while (!queue.isEmpty()) {
+            result.add(queue.poll());
+        }
+
+        return result;
     }
+}
