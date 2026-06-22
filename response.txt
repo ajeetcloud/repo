@@ -1,18 +1,18 @@
 class Solution {
-    public boolean hasPathSum(TreeNode root, int targetSum) {
-        
-        return dfsSum(root, targetSum);
+    public boolean isValidBST(TreeNode root) {
+
+        return dfs(root, null, null);
     }
 
-    private boolean dfsSum(TreeNode root, int targetSum) {
+    private boolean dfs(Treenode current, Integer min, Integer max) {
 
-        if (root == null) {
-            if (targetSum == 0) {
-                return true;
-            }
+        if (min != null && current.val < min) {
+            return false;
+        }
+        if (max != null && current.val > max) {
             return false;
         }
 
-        return dfsSum(root.left, targetSum - root.val) && dfsSum(root.right, targetSum - root.val);
+        return dfs(current.left, min, current.val) && dfs(current.right, current.val, max);
     }
 }
