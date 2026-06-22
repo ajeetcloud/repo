@@ -1,38 +1,23 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode() {}
- *     TreeNode(int val) { this.val = val; }
- *     TreeNode(int val, TreeNode left, TreeNode right) {
- *         this.val = val;
- *         this.left = left;
- *         this.right = right;
- *     }
- * }
- */
 class Solution {
-    public boolean isUnivalTree(TreeNode root) {
+    public List<Integer> preorderTraversal(TreeNode root) {
+        
+        List<Integer> result = new ArrayList<>();
+        dfsPre(root, result);
+
+        return result;
+    }
+
+    private void dfsPre(TreeNode root, List<Integer> result) {
 
         if (root == null) {
-            return false;
+            return;
         }
-        
-        return dfs(root, root.val);
+        result.add(root.val);
+        dfsPre(root.left, result);
+        dfsPre(root.right, result);
     }
 
-    private boolean dfs(TreeNode node, int val) {
-
-        if (node == null) {
-            return true;
-        }
-
-        if (node.val != val) {
-            return false;
-        }
-
-        return dfs(node.left, val) && dfs(node.right, val);
-    }
 }
+
+===============================================================================
+
