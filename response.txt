@@ -1,18 +1,24 @@
-class Solution {
+
+    // BST inorder traversal is always increasing
     public boolean isValidBST(TreeNode root) {
 
-        return dfs(root, null, null);
-    }
+        Deque<TreeNode> stack = new ArrayDeque<>();
+        TreeNode current = root;
+        Integer prev = null;
 
-    private boolean dfs(Treenode current, Integer min, Integer max) {
+        while (current != null || !stack.isEmpty()) {
+            while (current != null) {       // Inner while - dive as left as possible
+                stack.push(current);
+                current = current.left;
+            }
+            current = stack.pop();
+            if (prev != null && prev < current) {
+                return false;
+            }
+            prev = current;
+            // current
+            current = current.right;
 
-        if (min != null && current.val < min) {
-            return false;
         }
-        if (max != null && current.val > max) {
-            return false;
-        }
 
-        return dfs(current.left, min, current.val) && dfs(current.right, current.val, max);
     }
-}
