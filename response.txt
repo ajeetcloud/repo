@@ -1,24 +1,25 @@
+class Solution {
+    public int kthSmallest(TreeNode root, int k) {
 
-    // BST inorder traversal is always increasing
-    public boolean isValidBST(TreeNode root) {
-
-        Deque<TreeNode> stack = new ArrayDeque<>();
-        TreeNode current = root;
-        Integer prev = null;
-
-        while (current != null || !stack.isEmpty()) {
-            while (current != null) {       // Inner while - dive as left as possible
-                stack.push(current);
-                current = current.left;
-            }
-            current = stack.pop();
-            if (prev != null && prev < current) {
-                return false;
-            }
-            prev = current;
-            // current
-            current = current.right;
-
-        }
-
+        int dfs(root, k);
+        
     }
+
+    // Inorder
+    private int dfs(TreeNode root, int k) {
+
+        if (root == null) {
+            return -1;
+        }
+        if (k == 0) {
+            return root.val;
+        }
+        dfs(root.left, k);
+        // visit root
+        k--;
+        if (k == 0) {
+            return root.val;
+        }
+        dfs(root.right, k);
+    }
+}
