@@ -1,37 +1,10 @@
-/**
- * Definition for a binary tree node.
- * public class TreeNode {
- *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
- */
-class Solution {
+each node will return whetehr it found p or q or null, so every node will return TreeNode.
+leftAnswer = dfs(node.left)
+rightAnswer = dfs(mode.right);
 
-    boolean seen = false;
-    TreeNode successor = null;
+if ist not found it will be null.
 
-    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
-        
-        dfs(root, p);
-        return successor;
-    }
+when leftAnswer != null and leftAnswer == p and rightAnswer == q
+return currentNode as final answer.
 
-    private void dfs(TreeNode node, TreeNode p) {
-        if (node == null) {
-            return;
-        }
-        dfs(node.left, p);
-        // visit
-        if (seen) {
-            successor = node;
-            return;
-        }
-        if (node.val == p.val) {
-            seen = true;
-        }
-        dfs(node.right, p);
-        
-    }
-}
+rough solution
