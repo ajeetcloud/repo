@@ -14,36 +14,37 @@
  * }
  */
 class Solution {
-    public TreeNode buildTree(int[] preorder, int[] inorder) {
+
+    public void flatten(TreeNode root) {
         
-        int length = preorder.length;
-        return dfs(preorder, inorder, 0, length - 1, 0, length - 1);
-    }
-}
-
-private TreeNode dfs(int[] preorder, int[] inorder, int startIndexPre, int endIndexPre, int startIndexIn,
-int endIndexIn) {
-
-    if (startIndexPre > endIndexPre || startIndexIn > endIndexIn) {
-        return null;
+        TreeNode head = new TreeNode();
+        dfs(root, head);
+        return head;
     }
 
-    TreeNode root = new TreeNode(preorder[startIndexPre]);
-    int inOrderRootIndex = -1;
-    int elementsInLeftSubTree = 0;
-    for (int i = startIndexIn; i <= endIndexIn; i++) {
-        if (inorder[i] == root.val) {
-            inOrderRootIndex = i;
-            break;
+    private void dfs(TreeNode root, TreeNode head) {
+
+        if (root == null) {
+            return;
         }
-        elementsInLeftSubTree++;
+        // visit
+        head.val = root.val;
+        head.left = null;
+
+        TreeNode nextRight = new TreeNode()
+        head.right = nextRight;
+
+        dfs(root.left, head.right);
+        dfs(root.right, head.right);
+
     }
-
-    root.left = dfs(preorder, inorder, startIndexPre + 1, startIndexPre + elementsInLeftSubTree, startIndexIn, i - 1);
-    root.right = dfs(preorder, inorder, startIndexPre + elementsInLeftSubTree + 1, endIndexPre, i + 1, endIndexIn);
-
-    return root;
 }
+
+Line 38 will not work I know this as left has already doen the work
+
+
+
+
 
 
 
