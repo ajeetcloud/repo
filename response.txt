@@ -1,4 +1,24 @@
-FLatten List
+private TreeNode dfsFlatten(TreeNode node) {
 
-root ko bolo apne left ka answer lekarke aaye. Imagine left subtree khud to flatten karke le aaya hai.
-root apne right ko kisi temp me store karega. Jo answer leftsubtree se aaya usko apne left me laga dega. Jo leftsubtree ka answer aaya uske hum righ jate rahenge jab tak null na mile aur waha pe right subtree ko laga denge.
+        if (node == null) {
+            return null;
+        }
+
+        TreeNode leftTail = dfsFlatten(node.left);
+        TreeNode rightTail = dfsFlatten(node.right);
+
+        if (leftTail != null) {
+            leftTail.right = node.right;
+            node.right = node.left;
+            node.left = null;
+        }
+
+        if (rightTail != null) {
+            return rightTail;
+        }
+        if (leftTail != null) {
+            return leftTail;
+        }
+
+        return node;
+    }
