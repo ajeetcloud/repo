@@ -1,24 +1,28 @@
-private TreeNode dfsFlatten(TreeNode node) {
+public class Codec {
+
+    StringBuilder sb = new StringBuilder();
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+
+        dfs(root);
+    }
+
+    private void dfs(TreeNode node) {
 
         if (node == null) {
-            return null;
+            sb.append("n");
         }
+        
+        // visit
+        sb.append(node.val);
+        sb.append(",");
 
-        TreeNode leftTail = dfsFlatten(node.left);
-        TreeNode rightTail = dfsFlatten(node.right);
-
-        if (leftTail != null) {
-            leftTail.right = node.right;
-            node.right = node.left;
-            node.left = null;
-        }
-
-        if (rightTail != null) {
-            return rightTail;
-        }
-        if (leftTail != null) {
-            return leftTail;
-        }
-
-        return node;
+        dfs(node.left);
+        dfs(node.right);
     }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        
+    }
+}
