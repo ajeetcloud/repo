@@ -13,35 +13,48 @@
  *     }
  * }
  */
-
-record NodePair(int nodeVal, int depth) {}
-
 class Solution {
-    public TreeNode recoverFromPreorder(String traversal) {
+    public List<List<Integer>> levelOrder(TreeNode root) {
 
-        Queue<NodePair> queue = new ArrayDeque<>();
-        int count = 0;
-        for (int i = 0; i < traversal.length; i++) {
-            if (traversal.charAt(i) == '-') {
-                count++;
-            } else {
-                queue.offer(new NodePair(Integer.parseInt(traversal.charAt(i)), count));
-                count = 0;
+        List<List<Integer>> result = new ArrayList<>();
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.add(root);
+
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+            List<Integer> levelList = new ArrayList<>();
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode node = queue.poll();
+                levelList.add(node.val);
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
             }
+            result.add(result);
         }
-        return dfs(queue, -1);
-    }
 
-    private TreeNode dfs(Queue<NodePair> queue, int currentDepth) {
-
-        if (queue.peek().depth() <= currentDepth) {
-            return null;
-        }
-        NodePair node = queue.poll();
-        TreeNode treeNode = new TreeNode(node.nodeVal());
-        treeNode.left = dfs(queue, node.depth());
-        treeNode.right = dfs(queue, node.depth());
-
-        return treeNode;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
