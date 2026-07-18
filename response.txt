@@ -13,64 +13,47 @@
  *     }
  * }
  */
-record Triplet(int col, int row, int val) {}
+ record Pair(int col, TreeNode node) {}
 class Solution {
-
-    List<Triplet> triplets = new ArrayList<>();
-
-    public List<List<Integer>> verticalTraversal(TreeNode root) {
+    public List<List<Integer>> verticalOrder(TreeNode root) {
 
         List<List<Integer>> result = new ArrayList<>();
         if (root == null) {
             return result;
         }
-        
-        dfs(root, 0, 0);
-        triplets.sort((a, b) -> {
-            if (a.col() != b.col()) return Integer.compare(a.col(), b.col());
-            if (a.row() != b.row()) return Integer.compare(a.row(), b.row()) ;
-            Integer.compare(a.val(), b.val()); // value is tie-breaker
-        });
-        
-        int col = Integer.MIN_VALUE;
-        // Now create the result via grouping triplets
-        for (Triplet triplet: triplets) {
-            int currentCol = triplet.col();
-            if (col != currentCol) {
-                result.add(new ArrayList<>());
-                col = currentCol;
+        Map<Integer, List<Integer>> colToElements = new HashMap<>();
+
+        int minColIndex = Integer.MAX_VALUE;
+        int maxColIndex = Integer.MIN_VALUE;
+
+        // BFS takes care of row wise sorting and left to right elements
+        Queue<Pair> queue = new ArrayDeque<>();
+        Pair root = new Pair(0, root);
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            int levelSize = queue.size();
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode node = queue.poll();
+                int currentCol = node.col();
+                colToElements.getOrDefault(currentCol, new ArrayList<>()).add(node.val());
+
+                if (node.left != null) {
+                    queue.offer(new Pair(currentCol - 1, node.left));
+                }
+                if (node.right != null) {
+                    queue.offer(new Pair(currentCol + 1, node.right));
+                }
+                minColIndex = Math.min(minColIndex, currentCol - 1);
+                maxColIndex = Math.max(maxColIndex, currentCol + 1);
             }
-            // get the last triplet and add current value
-            result.get(result.size() - 1).add(triplet.val());
+        }
+
+
+        // 2. collect in result from colToElements
+        for (int i = minColIndex; i < maxColIndex; i++) {
+            result.add(new ArrayList<>());
+            result.get(result.size() - 1).addAll(colToElements.get(i));
         }
         return result;
     }
-
-    private void dfs(TreeNode node, int row, int col) {
-        if (node == null) {
-            return;
-        }
-        // PreOrder
-        // Visit first
-        triplets.add(new Triplet(row, col, node.val));
-        
-        dfs(node.left, row + 1, col - 1); // left child
-        dfs(node.lright, row + 1, col + 1); // right child
-    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
