@@ -1,60 +1,76 @@
-/*
-// Definition for a Node.
-class Node {
-    public int val;
-    public Node left;
-    public Node right;
-    public Node next;
-
-    public Node() {}
-    
-    public Node(int _val) {
-        val = _val;
-    }
-
-    public Node(int _val, Node _left, Node _right, Node _next) {
-        val = _val;
-        left = _left;
-        right = _right;
-        next = _next;
-    }
-};
-*/
-
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+record Triplet(int col, int row, int val) {}
 class Solution {
-    public Node connect(Node root) {
 
-        Node leftmost = root;
+    List<Triplet> triplets = new ArrayList<>();
 
-        while (leftmost != null) {
-            Node firstNode = null;
-            Node tail = null;
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
 
-            Node head = leftmost;
-            while (head != null) {
-                if (head.left != null) {
-                    if (firstNode == null) {
-                        firstNode = head.left;
-                        tail = head.left;
-                    } else {
-                        tail.next = head.left;
-                    }
-                    tail = tail.next;
-                }
-
-                if (head.right != null) {
-                    if (firstNode == null) {
-                        firstNode = head.right;
-                        tail = head.right;
-                    } else {
-                        tail.next = head.right;
-                    }
-                    tail = tail.next;
-                }
-                head = head.next;
-            }
-            leftmost = firstNode;
+        List<List<Integer>> result = new ArrayList<>();
+        if (root == null) {
+            return result;
         }
-        return root;
+        
+        dfs(root, 0, 0);
+        triplets.sort((a, b) -> {
+            if (a.col() != b.col()) return Integer.compare(a.col(), b.col());
+            if (a.row() != b.row()) return Integer.compare(a.row(), b.row()) ;
+            Integer.compare(a.val(), b.val()); // value is tie-breaker
+        });
+        
+        int col = Integer.MIN_VALUE;
+        // Now create the result via grouping triplets
+        for (Triplet triplet: triplets) {
+            int currentCol = triplet.col();
+            if (col != currentCol) {
+                result.add(new ArrayList<>());
+                col = currentCol;
+            }
+            // get the last triplet and add current value
+            result.get(result.size() - 1).add(triplet.val());
+        }
+        return result;
+    }
+
+    private void dfs(TreeNode node, int row, int col) {
+        if (node == null) {
+            return;
+        }
+        // PreOrder
+        // Visit first
+        triplets.add(new Triplet(row, col, node.val));
+        
+        dfs(node.left, row + 1, col - 1); // left child
+        dfs(node.lright, row + 1, col + 1); // right child
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
