@@ -1,0 +1,1 @@
+Hey Jarvis, check out the Kafka payment shadowy repo and perform a quick code review. First, clone the repo and then do the review, and then finally generate a code review report for me in a Markdown format.
