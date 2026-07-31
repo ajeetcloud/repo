@@ -1,1 +1,61 @@
-For your specific setup—Apple M-series hardware running a real-time English voice agent—Qwen3-ASR (optimized via MLX) is the superior choice.Here is why it outperforms Parakeet for your exact use case, along with the trade-offs:🌟 Why Qwen3 Wins on Apple SiliconNative Apple Optimization: Qwen3 models can be run directly using Apple's MLX framework. This allows the model to leverage the full unified memory architecture of your M-series chip, making it incredibly efficient.Severe Parakeet Bottlenecks: NVIDIA Parakeet relies heavily on CUDA and TensorRT for its blazing speed. Porting it to Apple Silicon requires running it on CPU or translating it via CoreML/MPS, which destroys its performance advantage and causes high latency.Low Latency for Voice Agents: A real-time voice agent requires an audio-to-text latency of under 200–300ms to feel natural. Qwen3-ASR running on MLX easily hits this threshold on M-series chips, especially when using quantized (4-bit or 8-bit) versions.Conversational Accuracy: Voice agents deal with informal, fast, and sometimes mumbled English speech. Qwen3's LLM-backed architecture handles contextual guessing and conversational fillers much better than Parakeet.⚠️ The Catch: Streaming WorkaroundsChunking Required: Neither model is a pure "streaming-first" engine like AssemblyAI or Deepgram. To use Qwen3 for a real-time agent, you must implement audio chunking (sending 0.5 to 1-second audio buffers continuously to the model).VAD is Essential: You will need to pair Qwen3 with a lightweight Voice Activity Detector like Silero VAD on your Mac. The VAD detects when the user finishes speaking, triggering Qwen3 to finalize the text and pass it to your LLM agent instantly.To help you get this running smoothly, could you tell me:Which specific M-series chip do you have (e.g., base M1, M2 Pro, M3 Max) and how much RAM does it have?What programming language (Python, Node.js, Swift) is your voice agent framework built on?I can provide the exact code snippets or repository links to set up local inference on your Mac.
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+
+        // Step 1: Guard
+        Set<String> wordSet = new HashSet<>(wordList);
+        if (!wordSet.contains(endWord)) {
+            return 0;
+        }
+
+        // Step 2: Fill the map
+        Map<String, List<String>> patternToWords = new HashMap<>();
+        if (!wordSet.contains(beginWord)) {
+            updatePatternToWords(patternToWords, beginWord);
+        }
+        for (String word: wordSet) {
+            updatePatternToWords(patternToWords, word);
+        }
+        
+        Queue<String> queue = new ArrayDeque<>();
+        Set<String> visited = new HashSet<>();
+
+        queue.offer(beginWord);
+        visited.add(beginWord);
+        int level = 1;
+        
+        while (!queue.isEmpty()) {
+
+            int levelSize = queue.size();
+            for (int i = 0; i < levelSize; i++) {
+                String currentWord = queue.poll();
+
+                if (currentWord.equals(endWord)) {
+                    return level;
+                }
+
+                // neighbors
+                for (int j = 0; j < currentWord.length(); j++) {
+                    String pattern = currentWord.substring(0, j) + "*" + currentWord.substring(j + 1);
+                    List<String> neighbors = patternToWords.getOrDefault(pattern, List.of());
+
+                    for (String neighbor : neighbors) {
+                        if (!visited.contains(neighbor)) {
+                            queue.offer(neighbor);
+                            visited.add(neighbor);
+                        }
+                    }
+                }
+            }
+            level++;
+        }
+        return level;
+    }
+
+    private void updatePatternToWords(Map<String, List<String>> patternToWords, String word) {
+
+        for (int i = 0; i < word.length(); i++) {
+            String pattern = word.substring(0, i) + "*" + word.substring(i + 1);
+            patternToWords.computeIfAbsent(pattern, k -> new ArrayList<>()).add(word);
+        }
+    }
+}
