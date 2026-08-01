@@ -1,61 +1,69 @@
 class Solution {
-    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+    public int openLock(String[] deadends, String target) {
 
-        // Step 1: Guard
-        Set<String> wordSet = new HashSet<>(wordList);
-        if (!wordSet.contains(endWord)) {
-            return 0;
-        }
+        String start = "0000";
 
-        // Step 2: Fill the map
-        Map<String, List<String>> patternToWords = new HashMap<>();
-        if (!wordSet.contains(beginWord)) {
-            updatePatternToWords(patternToWords, beginWord);
-        }
-        for (String word: wordSet) {
-            updatePatternToWords(patternToWords, word);
-        }
-        
+        Map<String> visited = new HashMap<>(deadends);
         Queue<String> queue = new ArrayDeque<>();
-        Set<String> visited = new HashSet<>();
 
-        queue.offer(beginWord);
-        visited.add(beginWord);
+        queue.offer(start);
+        visited.add(start);
         int level = 1;
-        
+
         while (!queue.isEmpty()) {
 
             int levelSize = queue.size();
             for (int i = 0; i < levelSize; i++) {
-                String currentWord = queue.poll();
-
-                if (currentWord.equals(endWord)) {
+                String current = queue.poll();
+                if (target.equals(current)) {
                     return level;
                 }
 
-                // neighbors
-                for (int j = 0; j < currentWord.length(); j++) {
-                    String pattern = currentWord.substring(0, j) + "*" + currentWord.substring(j + 1);
-                    List<String> neighbors = patternToWords.getOrDefault(pattern, List.of());
-
-                    for (String neighbor : neighbors) {
-                        if (!visited.contains(neighbor)) {
-                            queue.offer(neighbor);
-                            visited.add(neighbor);
-                        }
+                List<String> neighbors = getNeighbors(current);
+                for (String neighbor: neighbors) {
+                    if (!visited.contains(neighbor)) {
+                        queue.offer(neighbor);
+                        visited.add(neighbor);
                     }
                 }
             }
             level++;
+
         }
-        return level;
+        return -1;
     }
 
-    private void updatePatternToWords(Map<String, List<String>> patternToWords, String word) {
+    private List<String> getNeighbors(String current) {
 
-        for (int i = 0; i < word.length(); i++) {
-            String pattern = word.substring(0, i) + "*" + word.substring(i + 1);
-            patternToWords.computeIfAbsent(pattern, k -> new ArrayList<>()).add(word);
+        List<String> result = new ArrayList<>();
+
+        for (int i = 0; i < current.length(); i++) {
+            char[] nextChars = getNextChars(char.valueAt(i));
+
+            String neighbor1 = current.substring(0, i) + nextChars[0] + current.substring(i);
+            String neighbor2 = current.substring(0, i) + nextChars[1] + current.substring(i);
+
+            result.add(neighbor1);
+            result.add(neighbor2);
         }
+        return result;
     }
+
+    private char[] getNextChars(char c) {
+
+        char[] result = new char[2];
+        if (c == '0') {
+            result[0] = '9';
+        } else {
+            result[0] = c - '1';
+        }
+
+        if (c == '9'){
+            result[1] = '0';
+        } else {
+            result[1] = c + '1';
+        }
+        return result;
+    }
+
 }
