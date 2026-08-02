@@ -1,66 +1,109 @@
+record Cell(int r, int c){}
+
 class Solution {
-    public int openLock(String[] deadends, String target) {
+    public int shortestDistance(int[][] grid) {
 
-        String start = "0000";
+        int rows = grid.length;
+        int cols = grid[0].length;
 
-        Set<String> visited = new HashSet<>(Arrays.asList(deadends));
-        Queue<String> queue = new ArrayDeque<>();
+        int[][] totalDist = new int[rows][cols];
+        int[][] reachCount = new int[rows][cols];
 
-        if (visited.contains(target)) {
-            return -1;
+        // Find total buildings
+        int totalBuildings = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (grid[i][j] == 0) {
+                    totalBuildings++;
+                }
+            }
         }
 
-        queue.offer(start);
-        visited.add(start);
-        int level = 1;
+        // BFS from every building
+         for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (grid[i][j] == 1) {
+                    bfsFromBuilding(grid, i, j, totalDist, reachCount);
+                }
+            }
+         }
+
+        int minDistance = Integer.MAX_VALUE;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+
+                if (grid[i][j] == 0 && reachCount[i][j] == totalBuildings) {
+                    minDistance = Math.min(minDistance, totalDist[i][j]);
+                }
+            }
+        }
+
+        return minDistance == Integer.MAX_VALUE ? -1: minDistance;
+        
+    }
+
+
+    private void bfsFromBuilding(int[][] grid, int startR, int startC, int[][] totalDist, int[][] reachCount) {
+
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        boolean[][] visited = new boolean[rows][cols];
+        Queue<Cell> queue = new ArrayDeque<>();
+
+        queue.offer(new Cell(startR, startC));
+        visited[startR][startC] = true;
+
+        int distance = 0;
+        int[][] dirVector = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
         while (!queue.isEmpty()) {
-
             int levelSize = queue.size();
-            for (int i = 0; i < levelSize; i++) {
-                String current = queue.poll();
-                if (target.equals(current)) {
-                    return level;
-                }
+            distance++;
 
-                List<String> neighbors = getNeighbors(current);
-                for (String neighbor: neighbors) {
-                    if (!visited.contains(neighbor)) {
-                        queue.offer(neighbor);
-                        visited.add(neighbor);
+            for (int i = 0; i < levelSize; i++) {
+                Cell currentCell = queue.poll();
+                int r = currentCell.r();
+                int c = currentCell.c();
+
+                for (int[] dir: dirVector) {
+                    int nextR = r + dir[0];
+                    int nextC = c + dir[0];
+
+                    if (nextR >= 0 && nextR < rows && nextC >= 0 && nextC < cols
+                            && !visited[nextR][nextC] && grid[nextR][nextC] == 0) {
+  
+                              totalDist[nextR][nextC] += distance;
+                              reachCount[nextR][nextC]++;
+                              queue.offer(new Cell(nextR, nextC));
+                              visited[nextR][nextC] = true;
                     }
                 }
             }
-            level++;
-
         }
-        return -1;
+
+
     }
-
-    private List<String> getNeighbors(String current) {
-
-        List<String> result = new ArrayList<>();
-
-        for (int i = 0; i < current.length(); i++) {
-            char[] nextChars = getNextChars(current.charAt(i));
-
-            String neighbor1 = current.substring(0, i) + nextChars[0] + current.substring(i + 1);
-            String neighbor2 = current.substring(0, i) + nextChars[1] + current.substring(i + 1);
-
-            result.add(neighbor1);
-            result.add(neighbor2);
-        }
-        return result;
-    }
-
-    private char[] getNextChars(char c) {
-
-        char[] result = new char[2];
-
-        result[0] = (c == '0') ? '9' : (char)(c - 1);
-        result[1] = (c == '1') ? '0' : (char)(c + 1);
-
-        return result;
-    }
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
