@@ -3,18 +3,20 @@ class TrieNode {
     boolean isEnd;
 }
 
-class Solution {
+class Trie {
 
     private final TrieNode root;
+    private List<List<String>> result;
 
-    public Solution() {
-        root = new TrieNode();
+    public Trie() {
+        root = new TrieNode;
     }
 
-    private void insert(String w) {
+    private void addWord(String word) {
+
         TrieNode node = root;
-        for (int i = 0; i < w.length(); i++) {
-            int index = w.charAt(i) - 'a';
+        for (int i = 0; i < word.length(); i++) {
+            int index = word.charAt(i) - 'a';
             if (node.children[index] == null) {
                 node.children[index] = new TrieNode();
             }
@@ -23,35 +25,32 @@ class Solution {
         node.isEnd = true;
     }
 
-    private void shortestRoot(String word) {
+    private void suggest(String searchWord) {
+        result = new ArrayList<>();
+        for (int i = 0; i < ) {
 
-        TrieNode node = root;
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < word.length(); i++) {
-            int index = word.charAt(i) - 'a';
-            if (node.children[index] == null) {
-                return word;        // No root prefix
-            }
-            node = node.children[index];
-            prefix.append(word.charAt(i));
-            if (node.isEnd) {
-                return prefix.toString();
-            }
         }
-        return word;
+
+
+
+
+
     }
 
-    public String replaceWords(List<String> dictionary, String sentence) {
+    private List<List<String>> getResult() {
+        return this.result;
+    }
+}
 
-        StringBuilder result = new StringBuilder();
-
-        dictionary.forEach(root -> insert(root));
-        String[] words = sentence.split(" ");
-
-        for (int i = 0; i < words.length; i++) {
-            result.append(shortestRoot(words[i]));
+class Solution {
+    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
+        Trie trie = new Trie();
+        for (int i = 0; i < products.length; i++) {
+            trie.addWord(product);
         }
-        return result.toString();
+        for (int i = 0; i < searchWord.length(); i++) {
+            trie.suggest(searchWord.substring(0, i + 1));
+        }
+        return trie.getResult();
     }
 }
