@@ -6,51 +6,83 @@ class TrieNode {
 class Trie {
 
     private final TrieNode root;
-    private List<List<String>> result;
 
     public Trie() {
-        root = new TrieNode;
+        root = new TrieNode();
     }
 
-    private void addWord(String word) {
+    public void addWord(String word) {
 
         TrieNode node = root;
         for (int i = 0; i < word.length(); i++) {
             int index = word.charAt(i) - 'a';
-            if (node.children[index] == null) {
-                node.children[index] = new TrieNode();
+            if (node.children[i] == null) {
+                node.children[i] = new TrieNode();
             }
-            node = node.children[index];
+            node = node.children[i];
         }
         node.isEnd = true;
     }
 
-    private void suggest(String searchWord) {
-        result = new ArrayList<>();
-        for (int i = 0; i < ) {
+    public boolean searchPrefix(String prefix) {
 
+        TrieNode node = root;
+        for (int i = 0; i < prefix.length(); i++) {
+            int index = prefix.charAt(i) - 'a';
+            if (node == null || node.children[index] == null) {
+                return false;
+            }
+            node = node.children[index];
         }
-
-
-
-
-
-    }
-
-    private List<List<String>> getResult() {
-        return this.result;
+        return node != null && node.isEnd;
     }
 }
 
+
 class Solution {
-    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
+
+    private final static int[][] DIRECTIONS = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+    List<String> resultWords = new ArrayList<>();
+
+    public List<String> findWords(char[][] board, String[] words) {
+        
         Trie trie = new Trie();
-        for (int i = 0; i < products.length; i++) {
-            trie.addWord(product);
+        words.forEach(w -> trie.addWord(w));
+
+        int rows = board.length();
+        int cols = board[0].length();
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                dfs(board, trie, r, c, "");
+            }
         }
-        for (int i = 0; i < searchWord.length(); i++) {
-            trie.suggest(searchWord.substring(0, i + 1));
+        return resultWords;
+    }
+
+    private void dfs(char[][] board, Trie trie, int r, int c, String result) {
+
+        int rows = board.length();
+        int cols = board[0].length();
+
+        if (r < 0 || r >= rows || c < 0 || c >= cols) {
+            return;
         }
-        return trie.getResult();
+
+        result += board[r][c];
+        if (!trie.searchPrefix(result)) {
+            return;
+        } else {
+            resultWords.add(result)
+        }
+
+        for (int[] dir: DIRECTIONS) {
+            int nextR = r + dir[0];
+            int nextC = c + dir[1];
+
+            dfs(board, trie, nextR, nextC, result);
+        }
+
     }
 }
